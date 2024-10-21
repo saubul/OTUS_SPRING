@@ -1,5 +1,7 @@
 package ru.otus.hw.service;
 
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
@@ -9,12 +11,12 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import ru.otus.hw.dao.CsvQuestionDao;
 import ru.otus.hw.domain.Answer;
 import ru.otus.hw.domain.Question;
+import ru.otus.hw.domain.Student;
 
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.Mockito.*;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class TestServiceImplTest {
@@ -28,9 +30,8 @@ class TestServiceImplTest {
     @Mock
     CsvQuestionDao csvQuestionDao;
 
-
-    @Test
-    void executeTest() {
+    @BeforeEach
+    void init() {
         when(csvQuestionDao.findAll()).thenReturn(
                 List.of(new Question("Test question",
                         List.of(
@@ -38,14 +39,23 @@ class TestServiceImplTest {
                                 new Answer("wrong answer", false)
                         )))
         );
+    }
 
-        ArgumentCaptor<String> stringArgumentCaptor = ArgumentCaptor.forClass(String.class);
-        assertDoesNotThrow(() -> testService.executeTest());
+    @Test
+    void executeTestWithSuccess() {
 
-        verify(ioService, times(2)).printLine(stringArgumentCaptor.capture());
-        assertEquals("""
-                Question: Test question Possible answers:\s
-                1)right answer
-                2)wrong answer""", stringArgumentCaptor.getAllValues().get(1));
+        when(ioService.readStringWithPrompt(anyString())).thenReturn("right answer");
+
+        Assertions.assertEquals(1, testService.executeTestFor(new Student("test","test")).getRightAnswersCount());
+
+    }
+
+    @Test
+    void executeTestWithFail() {
+
+        when(ioService.readStringWithPrompt(anyString())).thenReturn("wrong answer");
+
+        Assertions.assertEquals(0, testService.executeTestFor(new Student("test","test")).getRightAnswersCount());
+
     }
 }
