@@ -1,37 +1,39 @@
-package ru.otus.hw.service;
+package ru.otus.hw.test.service;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
-import ru.otus.hw.dao.CsvQuestionDao;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import ru.otus.hw.dao.QuestionDao;
 import ru.otus.hw.domain.Answer;
 import ru.otus.hw.domain.Question;
 import ru.otus.hw.domain.Student;
+import ru.otus.hw.service.LocalizedIOService;
+import ru.otus.hw.service.TestServiceImpl;
 
 import java.util.List;
 
-import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 
-@ExtendWith(MockitoExtension.class)
+@SpringBootTest(properties = "spring.shell.interactive.enabled=false")
 class TestServiceImplTest {
 
-    @InjectMocks
+    @Autowired
     TestServiceImpl testService;
 
-    @Mock
+    @MockBean
     LocalizedIOService ioService;
 
-    @Mock
-    CsvQuestionDao csvQuestionDao;
+    @MockBean
+    QuestionDao questionDao;
 
     @BeforeEach
     void init() {
-        when(csvQuestionDao.findAll()).thenReturn(
+        when(questionDao.findAll()).thenReturn(
                 List.of(new Question("Test question",
                         List.of(
                                 new Answer("right answer", true),
