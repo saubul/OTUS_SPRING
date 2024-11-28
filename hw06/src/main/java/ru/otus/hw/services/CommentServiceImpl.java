@@ -48,7 +48,7 @@ public class CommentServiceImpl implements CommentService {
     @Transactional
     @Override
     public Comment update(Long id, String text) {
-        Comment comment = commentRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Comment with id %d not found".formatted(id)));
+        Comment comment = commentRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Comment wqith id %d not found".formatted(id)));
         if (!"".equals(text)) {
             comment.setText(text);
         }
