@@ -1,20 +1,19 @@
 package ru.otus.hw.repositories;
 
+import lombok.NonNull;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 import ru.otus.hw.models.Comment;
 
 import java.util.List;
-import java.util.Optional;
 
-public interface CommentRepository {
+@Repository
+public interface CommentRepository extends JpaRepository<Comment, Long> {
 
-    Comment save(Comment comment);
+    @NonNull
+    List<Comment> findAllByBookId(@NonNull Long book);
 
-    void deleteById(Long id);
-
-    Optional<Comment> findById(Long id);
-
-    List<Comment> findAllByBookId(Long bookId);
-
-    List<Comment> findAllByIds(List<Long> ids);
+    @NonNull
+    List<Comment> findAllByIdIn(@NonNull List<Long> ids);
 
 }
