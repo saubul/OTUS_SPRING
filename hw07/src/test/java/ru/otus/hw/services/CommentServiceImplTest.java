@@ -24,6 +24,7 @@ class CommentServiceImplTest {
     @Autowired
     private CommentService commentService;
 
+    @DirtiesContext(methodMode = DirtiesContext.MethodMode.BEFORE_METHOD)
     @Test
     void findById() {
         Optional<Comment> comment = commentService.findById(1L);
@@ -31,6 +32,7 @@ class CommentServiceImplTest {
         assertTrue(comment.get().getId() > 0);
     }
 
+    @DirtiesContext(methodMode = DirtiesContext.MethodMode.BEFORE_METHOD)
     @Test
     void findAllByBookId() {
         List<Comment> commentList = commentService.findAllByBookId(1L);
@@ -60,7 +62,7 @@ class CommentServiceImplTest {
         assertEquals(expectedComment.getText(), comment.getText());
     }
 
-    @DirtiesContext(methodMode = DirtiesContext.MethodMode.BEFORE_METHOD)
+    @DirtiesContext(methodMode = DirtiesContext.MethodMode.AFTER_METHOD)
     @Test
     void deleteById() {
         Optional<Comment> comment = commentService.findById(1L);
