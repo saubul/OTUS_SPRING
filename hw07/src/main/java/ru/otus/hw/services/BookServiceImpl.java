@@ -19,7 +19,9 @@ import java.util.Optional;
 public class BookServiceImpl implements BookService {
 
     private final BookRepository bookRepository;
+
     private final AuthorRepository authorRepository;
+
     private final GenreRepository genreRepository;
 
     private final BookConverter bookConverter;
@@ -44,10 +46,11 @@ public class BookServiceImpl implements BookService {
             book.setTitle(title);
         }
         if (authorId != null) {
-            book.setAuthor(authorRepository.findById(authorId).orElseThrow(() -> new EntityNotFoundException("Author with id %d not found".formatted(authorId))));
+            book.setAuthor(authorRepository.findById(authorId)
+                    .orElseThrow(() -> new EntityNotFoundException("Author with id %d not found".formatted(authorId))));
         }
         if (genreIds != null) {
-            book.setGenres(genreRepository.findAllByIds(genreIds));
+            book.setGenres(genreRepository.findAllByIdIn(genreIds));
         }
         return bookConverter.toDTO(bookRepository.save(book));
     }
@@ -55,15 +58,17 @@ public class BookServiceImpl implements BookService {
     @Transactional
     @Override
     public BookDto update(Long id, String title, Long authorId, List<Long> genreIds) {
-        Book book = bookRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Book with id %d not found".formatted(id)));
+        Book book = bookRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Book with id %d not found".formatted(id)));
         if (!"".equals(title)) {
             book.setTitle(title);
         }
         if (authorId != null) {
-            book.setAuthor(authorRepository.findById(authorId).orElseThrow(() -> new EntityNotFoundException("Author with id %d not found".formatted(authorId))));
+            book.setAuthor(authorRepository.findById(authorId)
+                    .orElseThrow(() -> new EntityNotFoundException("Author with id %d not found".formatted(authorId))));
         }
         if (genreIds != null) {
-            book.setGenres(genreRepository.findAllByIds(genreIds));
+            book.setGenres(genreRepository.findAllByIdIn(genreIds));
         }
         return bookConverter.toDTO(bookRepository.save(book));
     }
