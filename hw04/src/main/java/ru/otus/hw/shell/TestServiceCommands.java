@@ -30,7 +30,8 @@ public class TestServiceCommands {
     @Command(command = "login", alias = "l")
     public String login() {
         studentLoginContext.login(studentService.determineCurrentStudent());
-        return localizedIOService.getMessage("Shell.Login.success", studentLoginContext.getCurrentStudent().getFullName());
+        return localizedIOService.getMessage("Shell.Login.success",
+                studentLoginContext.getCurrentStudent().getFullName());
     }
 
 }

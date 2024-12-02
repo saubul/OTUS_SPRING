@@ -12,7 +12,7 @@ import ru.otus.hw.service.LocalizedIOService;
 public class ShellConfiguration {
 
     @Autowired
-    LocalizedIOService localizedIOService;
+    private LocalizedIOService localizedIOService;
 
     @Bean
     public AvailabilityProvider runTestCommandAvailabilityProvider(StudentLoginContext studentLoginContext) {

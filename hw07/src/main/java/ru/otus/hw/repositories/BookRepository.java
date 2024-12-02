@@ -12,7 +12,6 @@ import java.util.Optional;
 @Repository
 public interface BookRepository extends JpaRepository<Book, Long> {
 
-    // Иначе LazyInitExc
     @NonNull
     @Override
     @EntityGraph(value = "book-author-entity-graph")
@@ -20,6 +19,6 @@ public interface BookRepository extends JpaRepository<Book, Long> {
 
     @NonNull
     @Override
-    @EntityGraph(value = "book-author-entity-graph")
+    @EntityGraph(attributePaths = {"author", "genres"})
     Optional<Book> findById(@NonNull Long id);
 }
