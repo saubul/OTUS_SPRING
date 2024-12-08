@@ -18,7 +18,8 @@ public class CommentCommands {
 
     @ShellMethod(value = "Find comment by id", key = "cbid")
     public String findById(Long id) {
-        return commentService.findById(id).map(commentConverter::commentToString).orElse("Comment with id %d not found".formatted(id));
+        return commentService.findById(id).map(commentConverter::commentToString)
+                .orElse("Comment with id %d not found".formatted(id));
     }
 
     @ShellMethod(value = "Find comments by book id", key = "cbbid")

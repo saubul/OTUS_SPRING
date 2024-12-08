@@ -6,7 +6,6 @@ import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcOperations;
-import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSourceUtils;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.stereotype.Repository;
@@ -17,7 +16,10 @@ import ru.otus.hw.models.Genre;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -64,24 +66,29 @@ public class JdbcBookRepository implements BookRepository {
 
     @Override
     public void deleteById(long id) {
-        namedParameterJdbcOperations.update("delete from books where id = :id", Map.of("id", id));
+        namedParameterJdbcOperations.update("delete from books where id = :id",
+                Map.of("id", id));
     }
 
     private List<Book> getAllBooksWithoutGenres() {
-        return namedParameterJdbcOperations.query("select b.id, b.title, b.author_id, a.full_name " +
-                "from books b " +
-                "join authors a on b.author_id = a.id", new BookRowMapper());
+        return namedParameterJdbcOperations.query(
+                "select b.id, b.title, b.author_id, a.full_name " +
+                        "from books b " +
+                        "join authors a on b.author_id = a.id", new BookRowMapper());
     }
 
     private List<BookGenreRelation> getAllGenreRelations() {
-        return namedParameterJdbcOperations.query("select book_id, genre_id from books_genres",
+        return namedParameterJdbcOperations.query(
+                "select book_id, genre_id from books_genres",
                 new BookGenreRelationRowMapper());
     }
 
     private void mergeBooksInfo(List<Book> booksWithoutGenres, List<Genre> genres,
                                 List<BookGenreRelation> relations) {
-        Map<Long, Book> bookMap = booksWithoutGenres.stream().collect(Collectors.toMap(Book::getId, Function.identity()));
-        Map<Long, Genre> genreMap = genres.stream().collect(Collectors.toMap(Genre::getId, Function.identity()));
+        Map<Long, Book> bookMap = booksWithoutGenres.stream()
+                .collect(Collectors.toMap(Book::getId, Function.identity()));
+        Map<Long, Genre> genreMap = genres.stream()
+                .collect(Collectors.toMap(Genre::getId, Function.identity()));
         relations.forEach(relation -> {
             bookMap.get(relation.bookId).getGenres().add(genreMap.get(relation.genreId));
         });
@@ -91,7 +98,7 @@ public class JdbcBookRepository implements BookRepository {
         var keyHolder = new GeneratedKeyHolder();
 
         namedParameterJdbcOperations.update("insert into books(title, author_id) values(:title, :authorId)",
-                new MapSqlParameterSource(Map.of("title", book.getTitle(),"authorId", book.getAuthor().getId())),
+                new MapSqlParameterSource(Map.of("title", book.getTitle(), "authorId", book.getAuthor().getId())),
                 keyHolder);
 
         //noinspection DataFlowIssue
@@ -101,7 +108,8 @@ public class JdbcBookRepository implements BookRepository {
     }
 
     private Book update(Book book) {
-        int rowsAffectedCount = namedParameterJdbcOperations.update("update books set title = :title, author_id = :authorId where id = :id",
+        int rowsAffectedCount = namedParameterJdbcOperations.update(
+                "update books set title = :title, author_id = :authorId where id = :id",
                 Map.of("title", book.getTitle(),
                         "authorId", book.getAuthor().getId(),
                         "id", book.getId()));
@@ -116,9 +124,12 @@ public class JdbcBookRepository implements BookRepository {
     }
 
     private void batchInsertGenresRelationsFor(Book book) {
-        namedParameterJdbcOperations.batchUpdate("insert into books_genres(book_id, genre_id) values (:bookId, :genreId)",
+        namedParameterJdbcOperations.batchUpdate(
+                "insert into books_genres(book_id, genre_id) values (:bookId, :genreId)",
                 SqlParameterSourceUtils.createBatch(
-                        book.getGenres().stream().map(genre -> new BookGenreRelation(book.getId(), genre.getId())).collect(Collectors.toList())
+                        book.getGenres().stream()
+                                .map(genre -> new BookGenreRelation(book.getId(), genre.getId()))
+                                .collect(Collectors.toList())
                 ));
     }
 

@@ -7,7 +7,6 @@ import org.springframework.stereotype.Repository;
 import ru.otus.hw.models.Genre;
 
 import java.util.List;
-import java.util.Set;
 
 @RequiredArgsConstructor
 @Repository

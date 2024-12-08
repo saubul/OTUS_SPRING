@@ -25,10 +25,8 @@ public class TestServiceImpl implements TestService {
         ioService.printLine("");
         ioService.printLineLocalized("TestService.answer.the.questions");
         ioService.printLine("");
-
         var questions = questionDao.findAll();
         var testResult = new TestResult(student);
-
         for (var question : questions) {
             ioService.printLineLocalized("TestService.question");
             ioService.printLine(question.text());
