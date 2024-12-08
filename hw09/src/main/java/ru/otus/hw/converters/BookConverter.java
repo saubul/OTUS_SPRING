@@ -3,33 +3,31 @@ package ru.otus.hw.converters;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import ru.otus.hw.dto.BookDto;
+import ru.otus.hw.dto.BookEditDto;
+import ru.otus.hw.dto.GenreDto;
 import ru.otus.hw.models.Book;
 
-import java.util.ArrayList;
 import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Component
 public class BookConverter {
 
-    private final AuthorConverter authorConverter;
-
     private final GenreConverter genreConverter;
 
-    public String bookToString(BookDto book) {
-        var genresString = book.genreList().stream()
-                .map(genreConverter::genreToString)
-                .map("{%s}"::formatted)
-                .collect(Collectors.joining(", "));
-        return "Id: %d, title: %s, author: {%s}, genres: [%s]".formatted(
-                book.id(),
-                book.title(),
-                authorConverter.authorToString(book.author()),
-                genresString);
-    }
+    private final AuthorConverter authorConverter;
 
     public BookDto toDTO(Book book) {
         // Для Lazy-инициализация new ArrayList(..)
-        return new BookDto(book.getId(), book.getTitle(), book.getAuthor(), new ArrayList<>(book.getGenres()));
+        return new BookDto(book.getId(), book.getTitle(), authorConverter.convertToDto(book.getAuthor()),
+                book.getGenres().stream().map(genreConverter::convertToDto).collect(Collectors.toList()));
+    }
+
+    public BookEditDto toEditDto(BookDto bookDto) {
+        return new BookEditDto(bookDto.getId(), bookDto.getTitle(),
+                bookDto.getAuthor().id(), bookDto.getGenreList()
+                .stream()
+                .map(GenreDto::id).map(String::valueOf)
+                .collect(Collectors.joining(",")));
     }
 }

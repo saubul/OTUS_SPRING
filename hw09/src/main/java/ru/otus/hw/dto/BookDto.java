@@ -1,8 +1,20 @@
 package ru.otus.hw.dto;
 
-import ru.otus.hw.models.Author;
-import ru.otus.hw.models.Genre;
+import lombok.AllArgsConstructor;
+import lombok.Data;
 
 import java.util.List;
 
-public record BookDto(Long id, String title, Author author, List<Genre> genreList){}
+@Data
+@AllArgsConstructor
+public class BookDto {
+
+    private Long id;
+
+    private String title;
+
+    private AuthorDto author;
+
+    private List<GenreDto> genreList;
+
+}

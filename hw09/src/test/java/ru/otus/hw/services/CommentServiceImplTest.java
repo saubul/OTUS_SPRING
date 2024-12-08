@@ -4,20 +4,14 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
-import ru.otus.hw.models.Author;
-import ru.otus.hw.models.Book;
 import ru.otus.hw.models.Comment;
-import ru.otus.hw.models.Genre;
 
 import java.util.List;
 import java.util.Optional;
 
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 
-@SpringBootTest(properties = "spring.shell.interactive.enabled=false")
+@SpringBootTest
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_CLASS)
 class CommentServiceImplTest {
 
@@ -42,7 +36,7 @@ class CommentServiceImplTest {
 //        Comment expectedComment = new Comment(5L, "TEST COMMENT",
 //                new Book(1L, "BookTitle_1", new Author(1L, "Author_1"),
 //                        List.of(new Genre(1L, "Genre_1"), new Genre(2L, "Genre_2"))));
-        Comment comment = commentService.create( "TEST COMMENT", 1L);
+        Comment comment = commentService.create("TEST COMMENT", 1L);
         assertNotNull(comment);
         assertTrue(comment.getId() > 0);
         assertEquals("TEST COMMENT", comment.getText());
