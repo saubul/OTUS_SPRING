@@ -7,9 +7,13 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
 import ru.otus.models.Author;
 import ru.otus.models.Book;
+import ru.otus.models.Comment;
 import ru.otus.models.Genre;
 import ru.otus.services.BookService;
+import ru.otus.services.CommentService;
+
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.List;
@@ -21,6 +25,9 @@ class BookServiceImplTest {
 
     @Autowired
     private BookService bookService;
+
+    @Autowired
+    private CommentService commentService;
 
     @DirtiesContext(methodMode = DirtiesContext.MethodMode.BEFORE_METHOD)
     @Test
@@ -61,22 +68,24 @@ class BookServiceImplTest {
 
     @Test
     void update() {
-
         Book book = bookService.update("1", "Book_TEST", "1", List.of("1"));
-        assertThat(book).matches(b -> b.getTitle().equals("Book_TEST")); // и т.д. рекурсия не используется из-за неоднозначности ID
-
+        assertThat(book).usingRecursiveComparison().isEqualTo(bookService.findById("1").get());
     }
 
     @DirtiesContext(methodMode = DirtiesContext.MethodMode.AFTER_METHOD)
     @Test
     void deleteById() {
         Optional<Book> book = bookService.findById("1");
+        List<Comment> comments = commentService.findAllByBookId("1");
         assertTrue(book.isPresent());
+        assertFalse(comments.isEmpty());
 
         bookService.deleteById("1");
 
         book = bookService.findById("1");
+        comments = commentService.findAllByBookId("1");
         assertTrue(book.isEmpty());
+        assertTrue(comments.isEmpty());
 
     }
 }

@@ -31,13 +31,15 @@ public class CommentServiceImpl implements CommentService {
     @Override
     public Comment create(String text, String bookId) {
         Comment comment = new Comment();
-        if (!"".equals(text)) {
-            comment.setText(text);
+        if ("".equals(text)) {
+            throw new IllegalArgumentException("Comment text can't be empty");
         }
-        if (bookId != null) {
-            comment.setBook(bookRepository.findById(bookId)
-                    .orElseThrow(() -> new EntityNotFoundException("Book with id %s not found".formatted(bookId))));
+        if ("".equals(bookId)) {
+            throw new IllegalArgumentException("Comment book reference can't be empty");
         }
+        comment.setText(text);
+        comment.setBook(bookRepository.findById(bookId)
+                .orElseThrow(() -> new EntityNotFoundException("Book with id %s not found".formatted(bookId))));
         return commentRepository.save(comment);
     }
 

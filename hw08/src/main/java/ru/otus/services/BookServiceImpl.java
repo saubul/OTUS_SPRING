@@ -1,16 +1,22 @@
 package ru.otus.services;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.mongodb.core.mapping.event.AbstractMongoEventListener;
+import org.springframework.data.mongodb.core.mapping.event.BeforeDeleteEvent;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.otus.exceptions.EntityNotFoundException;
 import ru.otus.models.Book;
+import ru.otus.models.Comment;
 import ru.otus.repositories.AuthorRepository;
 import ru.otus.repositories.BookRepository;
+import ru.otus.repositories.CommentRepository;
 import ru.otus.repositories.GenreRepository;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Service
@@ -36,16 +42,19 @@ public class BookServiceImpl implements BookService {
     @Override
     public Book create(String title, String authorId, List<String> genreIds) {
         Book book = new Book();
-        if (!"".equals(title)) {
-            book.setTitle(title);
+        if ("".equals(title)) {
+            throw new IllegalArgumentException("Book title can't be empty");
         }
-        if (authorId != null) {
-            book.setAuthor(authorRepository.findById(authorId)
-                    .orElseThrow(() -> new EntityNotFoundException("Author with id %s not found".formatted(authorId))));
+        if ("".equals(authorId)) {
+            throw new IllegalArgumentException("Book author id can't be empty");
         }
-        if (genreIds != null) {
-            book.setGenres(genreRepository.findAllByIdIn(genreIds));
+        if (genreIds == null || genreIds.size() == 0) {
+            throw new IllegalArgumentException("Book genres ids can't be empty");
         }
+        book.setTitle(title);
+        book.setAuthor(authorRepository.findById(authorId)
+                .orElseThrow(() -> new EntityNotFoundException("Author with id %s not found".formatted(authorId))));
+        book.setGenres(genreRepository.findAllByIdIn(genreIds));
         return bookRepository.save(book);
     }
 
@@ -69,6 +78,26 @@ public class BookServiceImpl implements BookService {
     @Override
     public void deleteById(String id) {
         bookRepository.deleteById(id);
+    }
+
+    @Component
+    private static class BookCascadeDeleteMongoEventListener extends AbstractMongoEventListener<Book> {
+
+        private final CommentRepository commentRepository;
+
+        private BookCascadeDeleteMongoEventListener(CommentRepository commentRepository) {
+            this.commentRepository = commentRepository;
+        }
+
+        @Override
+        public void onBeforeDelete(BeforeDeleteEvent<Book> event) {
+            commentRepository.deleteAllById(
+                    commentRepository.findAllByBookId((String) event.getSource().get("_id"))
+                            .stream()
+                            .map(Comment::getId)
+                            .collect(Collectors.toList())
+            );
+        }
     }
 
 }
