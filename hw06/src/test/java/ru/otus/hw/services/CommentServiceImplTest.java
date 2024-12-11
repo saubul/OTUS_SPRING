@@ -3,6 +3,7 @@ package ru.otus.hw.services;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.annotation.DirtiesContext;
 import ru.otus.hw.models.Author;
 import ru.otus.hw.models.Book;
 import ru.otus.hw.models.Comment;
@@ -20,6 +21,7 @@ class CommentServiceImplTest {
     @Autowired
     private CommentService commentService;
 
+    @DirtiesContext(methodMode = DirtiesContext.MethodMode.BEFORE_METHOD)
     @Test
     void findById() {
         Optional<Comment> comment = commentService.findById(1L);
@@ -27,6 +29,7 @@ class CommentServiceImplTest {
         assertTrue(comment.get().getId() > 0);
     }
 
+    @DirtiesContext(methodMode = DirtiesContext.MethodMode.BEFORE_METHOD)
     @Test
     void findAllByBookId() {
         List<Comment> commentList = commentService.findAllByBookId(1L);
@@ -56,6 +59,7 @@ class CommentServiceImplTest {
         assertEquals(expectedComment.getText(), comment.getText());
     }
 
+    @DirtiesContext(methodMode = DirtiesContext.MethodMode.AFTER_METHOD)
     @Test
     void deleteById() {
         Optional<Comment> comment = commentService.findById(1L);

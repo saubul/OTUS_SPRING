@@ -34,6 +34,7 @@ class BookServiceImplTest {
         assertThat(expectedBook).usingRecursiveComparison().isEqualTo(book.get());
     }
 
+    @DirtiesContext(methodMode = DirtiesContext.MethodMode.BEFORE_METHOD)
     @Test
     void findAll() {
         List<BookDto> bookDTOList = bookService.findAll();
@@ -48,7 +49,6 @@ class BookServiceImplTest {
         assertThat(expectedBook).usingRecursiveComparison().isEqualTo(book);
     }
 
-    @DirtiesContext(methodMode = DirtiesContext.MethodMode.BEFORE_METHOD)
     @Test
     void update() {
         BookDto expectedBook = new BookDto(1L, "TEST BOOK2", new Author(1L, "Author_1"), Collections.emptyList());
@@ -56,6 +56,7 @@ class BookServiceImplTest {
         assertThat(expectedBook).usingRecursiveComparison().isEqualTo(book);
     }
 
+    @DirtiesContext(methodMode = DirtiesContext.MethodMode.AFTER_METHOD)
     @Test
     void deleteById() {
 
