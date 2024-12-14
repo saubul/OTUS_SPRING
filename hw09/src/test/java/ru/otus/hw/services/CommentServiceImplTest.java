@@ -4,11 +4,12 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
-import ru.otus.hw.models.Comment;
+import ru.otus.hw.dto.CommentDto;
+import ru.otus.hw.exceptions.NotFoundException;
 
 import java.util.List;
-import java.util.Optional;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
@@ -20,14 +21,13 @@ class CommentServiceImplTest {
 
     @Test
     void findById() {
-        Optional<Comment> comment = commentService.findById(1L);
-        assertTrue(comment.isPresent());
-        assertTrue(comment.get().getId() > 0);
+        CommentDto comment = commentService.findById(1L);
+        assertTrue(comment.id() > 0);
     }
 
     @Test
     void findAllByBookId() {
-        List<Comment> commentList = commentService.findAllByBookId(1L);
+        List<CommentDto> commentList = commentService.findAllByBookId(1L);
         assertEquals(1, commentList.size());
     }
 
@@ -36,11 +36,11 @@ class CommentServiceImplTest {
 //        Comment expectedComment = new Comment(5L, "TEST COMMENT",
 //                new Book(1L, "BookTitle_1", new Author(1L, "Author_1"),
 //                        List.of(new Genre(1L, "Genre_1"), new Genre(2L, "Genre_2"))));
-        Comment comment = commentService.create("TEST COMMENT", 1L);
+        CommentDto comment = commentService.create(new CommentDto("TEST COMMENT", 1L));
         assertNotNull(comment);
-        assertTrue(comment.getId() > 0);
-        assertEquals("TEST COMMENT", comment.getText());
-        assertEquals(1L, comment.getBook().getId());
+        assertTrue(comment.id() > 0);
+        assertEquals("TEST COMMENT", comment.text());
+        assertEquals(1L, comment.book().getId());
 
         // Здесь LazyInit..Exception из-за Lazy коллекции Genres в Book. Проверить нельзя
         // assertThat(expectedComment).usingRecursiveComparison().isEqualTo(comment);
@@ -49,21 +49,18 @@ class CommentServiceImplTest {
 
     @Test
     void update() {
-        Comment comment = commentService.update(1L, "TEST COM");
-        Comment expectedComment = commentService.findById(1L).get();
-        assertEquals(expectedComment.getText(), comment.getText());
+        CommentDto comment = commentService.update(new CommentDto(1L, "TEST COMMENT 2"));
+        CommentDto expectedComment = commentService.findById(1L);
+        assertThat(expectedComment).usingRecursiveComparison().isEqualTo(comment);
     }
 
     @DirtiesContext(methodMode = DirtiesContext.MethodMode.BEFORE_METHOD)
     @Test
     void deleteById() {
-        Optional<Comment> comment = commentService.findById(1L);
-        assertTrue(comment.isPresent());
+        assertDoesNotThrow(() -> commentService.findById(1L));
 
         commentService.deleteById(1L);
 
-        comment = commentService.findById(1L);
-        assertTrue(comment.isEmpty());
-
+        assertThrows(NotFoundException.class, () -> commentService.findById(1L));
     }
 }

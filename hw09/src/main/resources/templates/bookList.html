@@ -11,7 +11,7 @@
             <th>Title</th>
             <th>Author</th>
             <th>Genres</th>
-            <th>Edit</th>
+            <th>Update</th>
             <th>Delete</th>
         </tr>
         </thead>
@@ -19,10 +19,10 @@
         <tr th:each="book : ${books}">
             <td th:text="${book.id}">1</td>
             <td th:text="${book.title}">John Doe</td>
-            <td th:text="${book.author.fullName}">John Doe</td>
-            <td th:text="${#strings.listJoin(book.genreList.![name], ',')}">Genre_1</td>
+            <td th:text="${book.author.label}">John Doe</td>
+            <td th:text="${#strings.listJoin(book.genres.![label], ',')}">Genre_1</td>
             <td>
-                <a th:href="@{/book/edit(id=${book.id})}" href="editBook.html">Edit</a>
+                <a th:href="@{/book/update(id=${book.id})}" href="updateBook.html">Update</a>
             </td>
             <td>
                 <form th:action="@{/book/delete(id=${book.id})}" th:method="post" action="bookList.html">

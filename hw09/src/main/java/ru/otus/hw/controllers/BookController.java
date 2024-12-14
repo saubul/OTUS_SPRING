@@ -1,6 +1,5 @@
 package ru.otus.hw.controllers;
 
-import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
@@ -11,15 +10,11 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestParam;
-import ru.otus.hw.converters.BookConverter;
 import ru.otus.hw.dto.BookDto;
-import ru.otus.hw.dto.BookEditDto;
+import ru.otus.hw.dto.BookSaveDto;
 import ru.otus.hw.services.BookService;
 
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping("/book")
@@ -27,8 +22,6 @@ import java.util.stream.Collectors;
 public class BookController {
 
     private final BookService bookService;
-
-    private final BookConverter bookConverter;
 
     @GetMapping("/")
     public String findAllBooks(Model model) {
@@ -39,47 +32,34 @@ public class BookController {
 
     @GetMapping("/create")
     public String createBookPage(Model model) {
-        model.addAttribute("book", new BookEditDto());
+        model.addAttribute("book", new BookDto());
         return "createBook";
     }
 
     @PostMapping("/create")
-    public String createBook(@Valid @ModelAttribute("book") BookEditDto bookEditDto,
+    public String createBook(@Valid @ModelAttribute("book") BookSaveDto bookDto,
                              BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
-            return "redirect:/book/edit?id=" + bookEditDto.getId();
+            return "redirect:/book/create?id=" + bookDto.getId();
         }
-        bookService.create(bookEditDto.getTitle(), bookEditDto.getAuthorId(),
-                Arrays.stream(bookEditDto.getGenresIds()
-                                .replaceAll("\\s+", "")
-                                .split(","))
-                        .map(Long::parseLong)
-                        .collect(Collectors.toList()));
+        bookService.create(bookDto);
 
         return "redirect:/book/";
     }
 
-    @GetMapping("/edit")
-    public String editBookPage(@RequestParam("id") Long id, Model model) {
-        BookDto bookDto = bookService.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Book with %id not found".formatted(id)));
-        model.addAttribute("book", bookConverter.toEditDto(bookDto));
-        return "editBook";
+    @GetMapping("/update")
+    public String updateBookPage(@RequestParam("id") Long id, Model model) {
+        model.addAttribute("book", bookService.findById(id));
+        return "updateBook";
     }
 
-    @PostMapping("/edit")
-    public String editBook(@Valid @ModelAttribute("book") BookEditDto bookEditDto,
-                           BindingResult bindingResult) {
+    @PostMapping("/update")
+    public String updateBook(@Valid @ModelAttribute("book") BookSaveDto bookDto,
+                             BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
-            return "editBook";
+            return "updateBook";
         }
-        bookService.update(bookEditDto.getId(), bookEditDto.getTitle(), bookEditDto.getAuthorId(),
-                bookEditDto.getGenresIds() != null && !"".equals(bookEditDto.getGenresIds()) ?
-                Arrays.stream(bookEditDto.getGenresIds()
-                                .replaceAll("\\s+", "")
-                                .split(","))
-                        .map(Long::parseLong)
-                        .collect(Collectors.toList()) : Collections.emptyList());
+        bookService.update(bookDto);
         return "redirect:/book/";
     }
 
