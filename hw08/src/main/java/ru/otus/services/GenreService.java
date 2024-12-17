@@ -1,0 +1,12 @@
+package ru.otus.services;
+
+
+import ru.otus.models.Genre;
+
+import java.util.List;
+
+public interface GenreService {
+    List<Genre> findAll();
+
+    List<Genre> findAllByIds(List<String> ids);
+}
