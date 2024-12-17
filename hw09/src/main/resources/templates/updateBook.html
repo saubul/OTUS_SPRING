@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Book update</title>
+</head>
+<body>
+<form id="update-form" action="updateBook.html" th:action="@{/book/update(id=${book.id})}" th:method="post" th:object="${book}">
+    <h3>Book Info:</h3>
+
+    <div>
+        <label for="id-input">ID:</label>
+        <input id="id-input" type="text" readonly="readonly" th:field="*{id}" value="1"/>
+    </div>
+
+    <div>
+        <label for="book-name-input">Title:</label>
+        <input id="book-name-input" type="text" value="John Doe" th:field="*{title}" />
+        <div class="errors" th:if="${#fields.hasErrors('title')}" th:errors="*{title}">Wrong book name error</div>
+    </div>
+
+    <div>
+        <label for="book-author-input">Author:</label>
+        <input id="book-author-input" type="text" value="John Doe"
+               th:field="*{author.id}"/>
+        <div class="errors" th:if="${#fields.hasErrors('author.id')}" th:errors="*{author.id}">Wrong book author error</div>
+    </div>
+<!--${#strings.listJoin(book.genres.![id], ',')}-->
+    <div>
+        <label for="book-genre-input">Genres:</label>
+        <input id="book-genre-input" name="genres" type="text" th:value="${#strings.listJoin(book.genres.![id], ',')}">
+        <div class="errors" th:if="${#fields.hasErrors('genres')}" th:errors="*{genres}">Wrong book author error</div>
+    </div>
+
+    <div>
+        <button type="submit">Save</button>
+        <a href="bookList.html" th:href="@{/book/}">
+            <button type="button">Cancel</button>
+        </a>
+    </div>
+</form>
+</body>
+</html>
