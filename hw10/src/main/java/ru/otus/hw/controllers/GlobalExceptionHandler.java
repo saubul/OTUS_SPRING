@@ -1,17 +1,22 @@
 package ru.otus.hw.controllers;
 
-import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.bind.annotation.RestControllerAdvice;
+import ru.otus.hw.dto.ErrorDto;
+import ru.otus.hw.exceptions.NotFoundException;
 
-@ControllerAdvice
-@RequiredArgsConstructor
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+@RestControllerAdvice
 public class GlobalExceptionHandler {
 
-    @ExceptionHandler(Exception.class)
-    public ModelAndView handleNotFoundException(Exception ex) {
-        return new ModelAndView("error", "errorText", ex.getMessage());
+    private static final Logger LOGGER = Logger.getLogger("ERROR_LOGGER");
+
+    @ExceptionHandler(NotFoundException.class)
+    public ErrorDto handleNotFoundException(NotFoundException ex) {
+        LOGGER.log(Level.INFO, ex.getMessage());
+        return new ErrorDto(ex.getMessage());
     }
 
 }

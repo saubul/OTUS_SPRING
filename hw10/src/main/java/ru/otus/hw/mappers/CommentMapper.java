@@ -2,8 +2,8 @@ package ru.otus.hw.mappers;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
+import ru.otus.hw.dto.BookDto;
 import ru.otus.hw.dto.CommentDto;
-import ru.otus.hw.dto.ItemDto;
 import ru.otus.hw.models.Book;
 import ru.otus.hw.models.Comment;
 
@@ -16,7 +16,7 @@ public class CommentMapper {
             return null;
         }
         Book book = comment.getBook();
-        return new CommentDto(comment.getId(), comment.getText(), new ItemDto(book.getId(), book.getTitle()));
+        return new CommentDto(comment.getId(), comment.getText(), new BookDto(book.getId(), book.getTitle()));
     }
 
 }

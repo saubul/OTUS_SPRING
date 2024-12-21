@@ -9,9 +9,9 @@
             const bookTitle = document.getElementById('book-title-input').value;
             const authorId = Number(document.getElementById('book-author-input').value);
             const genresString = document.getElementById('book-genre-input').value;
-            const genres = genresString.split(',').map(genre => ({id: Number(genre), label: null}));
-            const book = { id: bookId, title: bookTitle, author: {id: authorId, label: null}, genres: genres }
-            fetch(`/api/v1/books`, {
+            const genres = genresString.split(',').map(genre => Number(genre));
+            const book = { id: bookId, title: bookTitle, authorId: authorId, genreIdList: genres }
+            fetch(`/api/v1/books/${bookId}`, {
                 method: 'PUT',
                 headers: {
                   'Accept': 'application/json',

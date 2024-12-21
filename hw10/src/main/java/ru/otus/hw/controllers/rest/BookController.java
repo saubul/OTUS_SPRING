@@ -1,7 +1,8 @@
 package ru.otus.hw.controllers.rest;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -10,7 +11,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.ResponseStatus;
+import ru.otus.hw.dto.BookCreateDto;
 import ru.otus.hw.dto.BookDto;
+import ru.otus.hw.dto.BookUpdateDto;
 import ru.otus.hw.services.BookService;
 
 import java.util.List;
@@ -23,30 +27,32 @@ public class BookController {
     private final BookService bookService;
 
     @GetMapping
-    public ResponseEntity<List<BookDto>> findAllBooks() {
-        List<BookDto> bookDtos = bookService.findAll();
-        return ResponseEntity.ok(bookDtos);
+    @ResponseStatus(value = HttpStatus.OK)
+    public List<BookDto> findAllBooks() {
+        return bookService.findAll();
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<BookDto> findById(@PathVariable("id") Long bookId) {
-        BookDto bookDto = bookService.findById(bookId);
-        return ResponseEntity.ok(bookDto);
+    @ResponseStatus(value = HttpStatus.OK)
+    public BookDto findById(@PathVariable("id") Long bookId) {
+        return bookService.findById(bookId);
     }
 
     @PostMapping
-    public ResponseEntity<BookDto> createBook(@RequestBody BookDto bookDto) {
-        return ResponseEntity.status(201).body(bookService.create(bookDto));
+    @ResponseStatus(value = HttpStatus.CREATED)
+    public BookDto createBook(@RequestBody BookCreateDto bookDto) {
+        return bookService.create(bookDto);
     }
 
-    @PutMapping
-    public ResponseEntity<BookDto> updateBook(@RequestBody BookDto bookDto) {
-        return ResponseEntity.ok(bookService.update(bookDto));
+    @PutMapping("/{id}")
+    @ResponseStatus(value = HttpStatus.OK)
+    public BookDto updateBook(@RequestBody @Valid BookUpdateDto bookDto) {
+        return bookService.update(bookDto);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<String> deleteBook(@PathVariable("id") Long id) {
+    @ResponseStatus(value = HttpStatus.NO_CONTENT)
+    public void deleteBook(@PathVariable("id") Long id) {
         bookService.deleteById(id);
-        return ResponseEntity.ok("OK");
     }
 }

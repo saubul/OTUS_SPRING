@@ -1,5 +1,7 @@
 package ru.otus.hw.dto;
 
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -11,19 +13,15 @@ import java.util.List;
 @AllArgsConstructor
 @Getter
 @Setter
-public class BookDto {
+public class BookCreateDto {
 
-    private Long id;
-
+    @NotNull
     private String title;
 
-    private AuthorDto author;
+    @NotNull
+    private Long authorId;
 
-    private List<GenreDto> genres;
-
-    public BookDto(Long id, String title) {
-        this.id = id;
-        this.title = title;
-    }
+    @NotEmpty
+    private List<Long> genresIdList;
 
 }

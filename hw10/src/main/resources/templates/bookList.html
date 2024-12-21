@@ -36,8 +36,8 @@
             row.innerHTML = `
                 <td>${book.id}</td>
                 <td>${book.title}</td>
-                <td>${book.author.label}</td>
-                <td>${book.genres.map(genre => genre.label).join(',')}</td>
+                <td>${book.author.fullName}</td>
+                <td>${book.genres.map(genre => genre.name).join(',')}</td>
                 <td>
                     <a href='/books/update/${book.id}'>Update</a>
                 </td>

@@ -25,8 +25,8 @@ class BookServiceImplTest {
     @DirtiesContext(methodMode = DirtiesContext.MethodMode.BEFORE_METHOD)
     @Test
     void findById() {
-        BookDto expectedBook = new BookDto(1L, "BookTitle_1", new ItemDto(1L, "Author_1"),
-                List.of(new ItemDto(1L, "Genre_1"), new ItemDto(2L, "Genre_2")));
+        BookDto expectedBook = new BookDto(1L, "BookTitle_1", new AuthorDto(1L, "Author_1"),
+                List.of(new GenreDto(1L, "Genre_1"), new GenreDto(2L, "Genre_2")));
         assertDoesNotThrow(() -> bookService.findById(1L));
         BookDto bookDto = bookService.findById(1L);
         assertThat(expectedBook).usingRecursiveComparison().isEqualTo(bookDto);
@@ -40,19 +40,19 @@ class BookServiceImplTest {
 
     @Test
     void create() {
-        BookDto expectedBook = new BookDto(5L, "TEST BOOK", new ItemDto(1L, "Author_1"), Collections.emptyList());
-        BookDto book = bookService.create(expectedBook);
+        BookCreateDto bookCreateDto = new BookCreateDto("TEST BOOK", 1L, Collections.emptyList());
+        BookDto expectedBook = new BookDto(5L, "TEST BOOK", new AuthorDto(1L, "Author_1"), Collections.emptyList());
+        BookDto book = bookService.create(bookCreateDto);
         assertThat(expectedBook).usingRecursiveComparison().isEqualTo(book);
     }
 
     @DirtiesContext(methodMode = DirtiesContext.MethodMode.BEFORE_METHOD)
     @Test
     void update() {
-        BookDto saveBookDto = new BookDto(1L, "TEST BOOK2", new ItemDto(1L, "Author_1"),
-                List.of());
-        BookDto book = bookService.update(saveBookDto);
-        BookDto expect = new BookDto(1L, "TEST BOOK2", new ItemDto(1L, "Author_1"),
-                List.of(new ItemDto(1L,  "Genre_1"), new ItemDto(2L, "Genre_2")));
+        BookUpdateDto bookUpdateDto = new BookUpdateDto(1L, "TEST BOOK2",1L, List.of());
+        BookDto book = bookService.update(bookUpdateDto);
+        BookDto expect = new BookDto(1L, "TEST BOOK2", new AuthorDto(1L, "Author_1"),
+                List.of(new GenreDto(1L,  "Genre_1"), new GenreDto(2L, "Genre_2")));
         assertThat(expect).usingRecursiveComparison().isEqualTo(book);
     }
 

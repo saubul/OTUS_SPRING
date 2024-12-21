@@ -42,10 +42,10 @@ public class CommentServiceImpl implements CommentService {
     @Override
     public CommentDto create(CommentDto commentDto) {
         Comment comment = new Comment();
-        if (!"".equals(commentDto.text())) {
-            comment.setText(commentDto.text());
+        if (!"".equals(commentDto.getText())) {
+            comment.setText(commentDto.getText());
         }
-        Long bookId = commentDto.book().getId();
+        Long bookId = commentDto.getBookDto().getId();
         if (bookId != null) {
             comment.setBook(bookRepository.findById(bookId)
                     .orElseThrow(() -> new EntityNotFoundException("Book with id \"" + bookId + "\" not found")));
@@ -56,14 +56,14 @@ public class CommentServiceImpl implements CommentService {
     @Transactional
     @Override
     public CommentDto update(CommentDto commentDto) {
-        Long commentId = commentDto.id();
+        Long commentId = commentDto.getId();
         if (commentId == null) {
             throw new IllegalArgumentException("Updatable comment id not provided");
         }
         Comment comment = commentRepository.findById(commentId)
                 .orElseThrow(() -> new EntityNotFoundException("Comment with id \"" + commentId + "\" not found"));
-        if (!"".equals(commentDto.text())) {
-            comment.setText(commentDto.text());
+        if (!"".equals(commentDto.getText())) {
+            comment.setText(commentDto.getText());
         }
         return commentMapper.toDto(commentRepository.save(comment));
     }

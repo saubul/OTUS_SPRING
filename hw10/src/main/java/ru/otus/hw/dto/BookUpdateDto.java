@@ -1,20 +1,26 @@
 package ru.otus.hw.dto;
 
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.List;
+
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
 @Setter
-public class CommentDto {
+public class BookUpdateDto {
 
+    @NotNull
     private Long id;
 
-    private String text;
+    private String title;
 
-    private BookDto bookDto;
+    private Long authorId;
+
+    private List<Long> genreIdList;
 
 }

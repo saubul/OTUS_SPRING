@@ -39,7 +39,7 @@
             row.innerHTML = `
                 <td>${comment.id}</td>
                 <td>${comment.text}</td>
-                <td>${comment.book.label}</td>
+                <td>${comment.bookDto.title}</td>
             `;
             tbody.appendChild(row);
         }
@@ -48,15 +48,7 @@
                 // Очищаем строки таблицы
                 document.querySelector('#comments tbody').innerHTML = '';
                 const bookId = document.getElementById('book-id-input').value;
-                const response = await fetch('/api/v1/comments/filters',
-                    {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify({bookId: bookId})
-                    }
-                );
+                const response = await fetch(`/api/v1/books/${bookId}/comments`);
                 const comments = await response.json();
 
                 comments.forEach(comment => {
