@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Author</title>
+</head>
+<body>
+    <table id="authors">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Full name</th>
+            </tr>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
+    <a href="index.html" th:href="@{/}">
+        <button type="button">Home</button>
+    </a>
+
+    <script>
+        function addRow(author) {
+            const tbody = document.querySelector('#authors tbody');
+            const row = document.createElement('tr');
+            row.setAttribute('data-id', author.id);
+            row.innerHTML = `
+                <td>${author.id}</td>
+                <td>${author.fullName}</td>
+            `;
+            tbody.appendChild(row);
+        }
+        async function getAuthors() {
+            try {
+                const response = await fetch('/api/v1/authors');
+                const authors = await response.json();
+
+                authors.forEach(author => {
+                    addRow(author);
+                });
+            } catch (error) {
+                console.error('Ошибка при получении данных:', error);
+            }
+        }
+        document.addEventListener('DOMContentLoaded', getAuthors);
+    </script>
+
+</body>
