@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Book create</title>
+
+    <script>
+        function createBook() {
+            const savedBookContainer = document.getElementById("saved-book")
+            const bookTitle = document.getElementById('book-title-input').value;
+            const authorId = Number(document.getElementById('book-author-input').value);
+            const genresString = document.getElementById('book-genre-input').value;
+            const genres = genresString.split(',').map(genre => Number(genre));
+            const book = { title: bookTitle, authorId: authorId, genresIdList: genres }
+            fetch(`/api/v1/books`, {
+                method: 'POST',
+                headers: {
+                  'Accept': 'application/json',
+                  'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(book)
+            })
+            .then(rawResponse => rawResponse.json())
+            .then(json => savedBookContainer.innerHTML = JSON.stringify(json, null, 4))
+        }
+    </script>
+</head>
+<body>
+
+<h3>Book Info:</h3>
+<form id="update-form" action="updateBook.html" th:method="post">
+
+    <div>
+        <label for="book-title-input">Title:</label>
+        <input id="book-title-input" type="text" value="John Doe" />
+    </div>
+
+    <div>
+        <label for="book-author-input">Author:</label>
+        <input id="book-author-input" type="text" value="John Doe"/>
+    </div>
+
+    <div>
+        <label for="book-genre-input">Genres:</label>
+        <input id="book-genre-input" name="genres" type="text">
+    </div>
+
+    <div>
+        <button type="button" onclick="createBook()">Save</button>
+        <a href="bookList.html" th:href="@{/books}">
+            <button type="button">Cancel</button>
+        </a>
+    </div>
+</form>
+<pre id = "saved-book"></pre>
+
+</body>
+</html>

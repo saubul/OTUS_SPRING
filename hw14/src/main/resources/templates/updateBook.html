@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Book update</title>
+
+    <script>
+        function updateBook() {
+            const bookId = Number(document.getElementById('id-input').value);
+            const bookTitle = document.getElementById('book-title-input').value;
+            const authorId = Number(document.getElementById('book-author-input').value);
+            const genresString = document.getElementById('book-genre-input').value;
+            const genres = genresString.split(',').map(genre => Number(genre));
+            const book = { id: bookId, title: bookTitle, authorId: authorId, genreIdList: genres }
+            fetch(`/api/v1/books/${bookId}`, {
+                method: 'PUT',
+                headers: {
+                  'Accept': 'application/json',
+                  'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(book)
+            })
+        }
+    </script>
+</head>
+<body>
+
+    <h3>Book Info:</h3>
+    <form id="update-form" action="updateBook.html" th:method="post">
+
+        <div>
+            <label for="id-input">ID:</label>
+            <input id="id-input" type="text" readonly="readonly" value="1" th:value="${bookId}"/>
+        </div>
+
+        <div>
+            <label for="book-title-input">Title:</label>
+            <input id="book-title-input" type="text" value="John Doe" />
+        </div>
+
+        <div>
+            <label for="book-author-input">Author:</label>
+            <input id="book-author-input" type="text" value="John Doe"/>
+        </div>
+
+        <div>
+            <label for="book-genre-input">Genres:</label>
+            <input id="book-genre-input" name="genres" type="text">
+        </div>
+
+        <div>
+            <button type="button" onclick="updateBook()">Save</button>
+            <a href="bookList.html" th:href="@{/books}">
+                <button type="button">Cancel</button>
+            </a>
+        </div>
+    </form>
+    <script>
+        function getBooksById() {
+            const bookId = document.getElementById('id-input').value;
+            try {
+                fetch(`/api/v1/books/${bookId}`)
+                .then(rawResponse => rawResponse.json())
+                .then(json => {
+                    document.getElementById('book-title-input').value = json.title;
+                    document.getElementById('book-author-input').value = json.author.id;
+                    document.getElementById('book-genre-input').value = json.genres.map(genre => genre.id).join(',')
+                });
+            } catch (error) {
+                console.error('Ошибка при получении данных:', error);
+            }
+        }
+        document.addEventListener('DOMContentLoaded', getBooksById);
+    </script>
+</body>
+</html>
