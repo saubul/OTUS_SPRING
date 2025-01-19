@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Genre</title>
+</head>
+<body>
+    <table id="genres">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Name</th>
+            </tr>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
+    <br/>
+    <a href="index.html" th:href="@{/}">
+        <button type="button">Home</button>
+    </a>
+
+    <script>
+        function addRow(genre) {
+            const tbody = document.querySelector('#genres tbody');
+            const row = document.createElement('tr');
+            row.setAttribute('data-id', genre.id);
+            row.innerHTML = `
+                <td>${genre.id}</td>
+                <td>${genre.name}</td>
+            `;
+            tbody.appendChild(row);
+        }
+        async function getGenres() {
+            try {
+                const response = await fetch('/api/v1/genres');
+                const genres = await response.json();
+
+                genres.forEach(genre => {
+                    addRow(genre);
+                });
+            } catch (error) {
+                console.error('Ошибка при получении данных:', error);
+            }
+        }
+        document.addEventListener('DOMContentLoaded', getGenres);
+    </script>
+</body>
