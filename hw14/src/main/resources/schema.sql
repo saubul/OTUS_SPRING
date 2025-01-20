@@ -37,3 +37,15 @@ create table users (
     enabled int,
     primary key (id)
 );
+
+create table roles (
+    id bigserial,
+    name varchar(255) not null unique,
+    primary key (id)
+);
+
+create table users_roles (
+    user_id bigint,
+    role_id bigint,
+    primary key (user_id, role_id)
+);

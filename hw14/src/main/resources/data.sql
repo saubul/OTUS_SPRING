@@ -21,4 +21,11 @@ values (1, 1),   (1, 2),
 
 
 insert into users(username, password, enabled)
-values ('daemon', 'daemon', 1)
+values ('admin', 'admin', 1),
+('user', 'user', 1);
+
+insert into roles(name) values ('admin'), ('user');
+
+insert into users_roles(user_id, role_id)
+values (1 ,1),
+(2, 2)

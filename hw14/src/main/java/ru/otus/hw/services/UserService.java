@@ -18,4 +18,5 @@ public class UserService implements UserDetailsService {
         return userRepository.findByUsername(username).orElseThrow(() ->
                 new UsernameNotFoundException("По логину \"" + username + "\" не найден ни один пользователь"));
     }
+
 }
