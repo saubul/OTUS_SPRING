@@ -11,8 +11,6 @@ import java.util.List;
 @AllArgsConstructor
 public class Report {
 
-    private Long id;
-
     private Long clientId;
 
     private List<Account> clientAccounts;
