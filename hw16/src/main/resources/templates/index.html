@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Home</title>
+    <meta charset="UTF-8">
+</head>
+<body>
+    <a href="bookList.html" th:href="@{/books}">
+        <button type="button">Books</button>
+    </a>
+    <br/>
+    <a href="authorList.html" th:href="@{/authors}">
+        <button type="button">Authors</button>
+    </a>
+    <br/>
+    <a href="genreList.html" th:href="@{/genres}">
+        <button type="button">Genres</button>
+    </a>
+    <br/>
+    <a href="commentList.html" th:href="@{/comments}">
+        <button type="button">Comments</button>
+    </a>
+</body>
+</html>

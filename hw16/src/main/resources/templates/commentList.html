@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>comment</title>
+</head>
+<body>
+    <form id="filter-form" action="commentList.html" method="post">
+        <div>
+            <label for="book-id-input">Book id:</label>
+            <input id="book-id-input" name="bookId" type="number" value=""/>
+        </div>
+
+        <div>
+            <button id="btn" type="button" onclick="getCommentsByBook()">Get</button>
+        </div>
+
+    </form>
+    <a href="index.html" th:href="@{/}">
+        <button type="button">Home</button>
+    </a>
+    <table id="comments">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Text</th>
+                <th>Book</th>
+            </tr>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
+
+
+    <script>
+        function addRow(comment) {
+            const tbody = document.querySelector('#comments tbody');
+            const row = document.createElement('tr');
+            row.setAttribute('data-id', comment.id);
+            row.innerHTML = `
+                <td>${comment.id}</td>
+                <td>${comment.text}</td>
+                <td>${comment.bookDto.title}</td>
+            `;
+            tbody.appendChild(row);
+        }
+        async function getCommentsByBook() {
+            try {
+                // Очищаем строки таблицы
+                document.querySelector('#comments tbody').innerHTML = '';
+                const bookId = document.getElementById('book-id-input').value;
+                const response = await fetch(`/api/v1/books/${bookId}/comments`);
+                const comments = await response.json();
+
+                comments.forEach(comment => {
+                    addRow(comment);
+                });
+            } catch (error) {
+                console.error('Ошибка при получении данных:', error);
+            }
+        }
+    </script>
+
+</body>
